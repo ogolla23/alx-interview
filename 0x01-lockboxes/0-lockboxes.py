@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 '''A module for working with lockboxes.
 '''
-from collections import deque
 
 
 def canUnlockAll(boxes):
@@ -10,17 +9,13 @@ def canUnlockAll(boxes):
     box is unlocked.
     '''
     n = len(boxes)
-    seen_boxes = [False]*n
-    seen_boxes[0] = True
-    queue = deque(boxes[0])
-    
-    while queue:
-        boxIdx = queue.popleft()
+    seen_boxes = set([0])
+    unseen_boxes = set(boxes[0]).difference(set([0]))
+    while len(unseen_boxes) > 0:
+        boxIdx = unseen_boxes.pop()
         if not boxIdx or boxIdx >= n or boxIdx < 0:
             continue
-        if not seen_boxes[boxIdx]:
-            queue.extend(boxes[boxIdx])
-            seen_boxes[boxIdx] = True
-            
-    return all(seen_boxes)
-
+        if boxIdx not in seen_boxes:
+            unseen_boxes = unseen_boxes.union(boxes[boxIdx])
+            seen_boxes.add(boxIdx)
+    return n == len(seen_boxes)
